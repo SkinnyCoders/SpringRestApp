@@ -1,16 +1,25 @@
 package com.tanto.service;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.hash.Hashing;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -29,10 +38,11 @@ public class ServiceLaporan {
 	@Autowired
 	ServiceUpload servUpload;
 	
+	@Autowired
+	Environment env;
+	
 	public Boolean insertLaporan(ModelLaporan mlaporan, MultipartFile file) {
-		
-			Client client = Client.create();
-			
+
 		try {
 			if(mlaporan.getAfiliasi().isEmpty()) {
 				return false;
@@ -40,27 +50,42 @@ public class ServiceLaporan {
 				return false;
 			}
 			
-			FileNameReplace replace = new FileNameReplace();
-			
-			if(servUpload.save(file)) {
-				mlaporan.setLampiran(servUpload.root+"/"+replace.replaceName(file.getOriginalFilename()));
+			if(!file.isEmpty()) {
+				FileNameReplace replace = new FileNameReplace();
+				if(servUpload.save(file)) {
+					mlaporan.setLampiran(servUpload.root+"/"+replace.replaceName(file.getOriginalFilename()));
+				}
 			}
 			
-			SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-			Date date = new Date(System.currentTimeMillis());
-			String date_now = formatter.format(date);
+			//get date time now 
+			Instant dateNow = Instant.now();
+			ZonedDateTime nowAsiaSingapore = dateNow.atZone(ZoneId.of("Asia/Jakarta"));
+		    LocalDateTime utc1 = nowAsiaSingapore.toLocalDateTime();
+		    //formated date time
+		    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	        String formatDateTime = utc1.format(formatter);
+		    
+//		    SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+//			Date date = new Date(time);
+//			String date_now = formatter.format(date);			
 			
-			String id = System.currentTimeMillis()+"_"+UUID.randomUUID();
+			//String id = System.currentTimeMillis()+"_"+UUID.randomUUID();
+	        
+			String idString = mlaporan.getJudul()+"-"+mlaporan.getBidang()+"-"+mlaporan.getAfiliasi();
+			String idHash = Hashing.sha256()
+					.hashString(idString, StandardCharsets.UTF_8)
+					.toString();
+			
 			HashMap<String, Object> data = new HashMap<String, Object>();
-			data.put("id", id);
+			data.put("id", idHash);
 			data.put("judul", mlaporan.getJudul());
 			data.put("bidang", mlaporan.getBidang());
 			data.put("afiliasi", mlaporan.getAfiliasi());
 			data.put("informasi", mlaporan.getInformasi());
 			data.put("lampiran", mlaporan.getLampiran());
-			data.put("created_at", date_now);
+			data.put("created_at", formatDateTime);
 			
-			JsonNode jc = new JerseyClientFunction().clientPost("http://127.0.0.1:9201/datates/_doc/" + id, data);
+			JsonNode jc = new JerseyClientFunction().clientPost(env.getProperty("elasticsearch.url")+":"+env.getProperty("elasticsearch.local.port")+"/"+env.getProperty("elasticsearch.index")+"/_doc/" + idHash, data);
 			
 			if(jc.get("result").asText().equals("created")) {
 				return true;
@@ -68,14 +93,14 @@ public class ServiceLaporan {
 				return false;
 			}
 		} catch (Exception e) {
-			System.out.println("catch traces");
+			e.getStackTrace();
 			return false;
 		}
 	}
 	
 	public Boolean deleteLaporan(String id) {
 		try {
-			JsonNode js = new JerseyClientFunction().clientDelete("http://127.0.0.1:9201/datates/_doc/" + id);
+			JsonNode js = new JerseyClientFunction().clientDelete(env.getProperty("elasticsearch.url")+":"+env.getProperty("elasticsearch.local.port")+"/"+env.getProperty("elasticsearch.index")+"/_doc/" + id);
 			if (js.get("result").asText().equals("deleted")) {
 				return true;
 			} else {
@@ -104,7 +129,7 @@ public class ServiceLaporan {
 					mlaporan.setLampiran(servUpload.root+"/"+replace.replaceName(file.getOriginalFilename()));
 				}
 			}else {
-				JsonNode jsfile = new JerseyClientFunction().clientGet("http://127.0.0.1:9201/datates/_doc/" + id);
+				JsonNode jsfile = new JerseyClientFunction().clientGet(env.getProperty("elasticsearch.url")+":"+env.getProperty("elasticsearch.local.port")+"/"+env.getProperty("elasticsearch.index")+"/_doc/" + id);
 				mlaporan.setLampiran(jsfile.get("_source").get("lampiran").asText());
 			}
 			
@@ -123,7 +148,7 @@ public class ServiceLaporan {
 			data_result.put("doc", data);
 			
 			JsonNode jc = new JerseyClientFunction()
-					.clientPost("http://127.0.0.1:9201/datates/_doc/" + id+ "/_update", data_result);
+					.clientPost(env.getProperty("elasticsearch.url")+":"+env.getProperty("elasticsearch.local.port")+"/"+env.getProperty("elasticsearch.index")+"/_doc/" + id+ "/_update", data_result);
 			
 			if(jc.get("result").asText().equals("updated")) {
 				return true;

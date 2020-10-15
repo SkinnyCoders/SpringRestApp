@@ -1,49 +1,24 @@
 package com.tanto.model;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 import com.google.common.hash.Hashing;
 
-public class ModelLaporan {
+public class ModelLaporanUpdate {
 	private String id;
 	private String judul;
 	private String bidang;
 	private String afiliasi;
 	private String informasi;
 	private String lampiran;
-	private String created_at;
 	private String update_at;
 	
 	public String getId() {
-		String idString = this.getCreated_at();
-		String idHash = Hashing.sha256()
-				.hashString(idString, StandardCharsets.UTF_8)
-				.toString();
-		
-		return idHash;
+		return id;
 	}
-	
-	public String getCreated_at() {
-		return created_at;
+	public void setId(String id) {
+		this.id = id;
 	}
-
-	public void setCreated_at(String created_at) {
-		this.created_at = created_at;
-	}
-
-	public String getUpdate_at() {
-		return update_at;
-	}
-
-	public void setUpdate_at(String update_at) {
-		this.update_at = update_at;
-	}
-
 	public String getJudul() {
 		return judul;
 	}
@@ -73,5 +48,11 @@ public class ModelLaporan {
 	}
 	public void setLampiran(String lampiran) {
 		this.lampiran = lampiran;
+	}
+	public String getUpdate_at() {
+		return update_at;
+	}
+	public void setUpdate_at(String update_at) {
+		this.update_at = update_at;
 	}
 }

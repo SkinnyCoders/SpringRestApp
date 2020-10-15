@@ -12,6 +12,7 @@ import com.tanto.functions.FileNameReplace;
 
 @Service
 public class ServiceUpload {
+	
 	public final Path root = Paths.get("/home/baskara/uploads");
 	
 	public void init() {

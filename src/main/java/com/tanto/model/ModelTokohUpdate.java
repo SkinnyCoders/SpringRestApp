@@ -1,10 +1,6 @@
 package com.tanto.model;
 
-import java.nio.charset.StandardCharsets;
-
-import com.google.common.hash.Hashing;
-
-public class ModelTokoh {
+public class ModelTokohUpdate {
 	private String id;
 	private String foto;
 	private String nama;
@@ -25,16 +21,10 @@ public class ModelTokoh {
 	private String medsos;
 	private String email;
 	private String keterangan;
-	private String created_at;
 	private String updated_at;
 	
 	public String getId() {
-		String idString = this.getNama()+"-"+this.getTanggal_lahir()+"-"+this.getTempat_lahir();
-		String idHash = Hashing.sha256()
-				.hashString(idString, StandardCharsets.UTF_8)
-				.toString();
-		
-		return idHash;
+		return id;
 	}
 	
 	public String getFoto() {
@@ -54,6 +44,18 @@ public class ModelTokoh {
 	}
 	public void setJenis_kelamin(String jenis_kelamin) {
 		this.jenis_kelamin = jenis_kelamin;
+	}
+	public String getTanggal_lahir() {
+		return tanggal_lahir;
+	}
+	public void setTanggal_lahir(String tanggal_lahir) {
+		this.tanggal_lahir = tanggal_lahir;
+	}
+	public String getTempat_lahir() {
+		return tempat_lahir;
+	}
+	public void setTempat_lahir(String tempat_lahir) {
+		this.tempat_lahir = tempat_lahir;
 	}
 	public String getAlamat() {
 		return alamat;
@@ -139,33 +141,10 @@ public class ModelTokoh {
 	public void setKeterangan(String keterangan) {
 		this.keterangan = keterangan;
 	}
-	public String getTanggal_lahir() {
-		return tanggal_lahir;
-	}
-	public void setTanggal_lahir(String tanggal_lahir) {
-		this.tanggal_lahir = tanggal_lahir;
-	}
-	public String getTempat_lahir() {
-		return tempat_lahir;
-	}
-	public void setTempat_lahir(String tempat_lahir) {
-		this.tempat_lahir = tempat_lahir;
-	}
-
-	public String getCreated_at() {
-		return created_at;
-	}
-
-	public void setCreated_at(String created_at) {
-		this.created_at = created_at;
-	}
-
 	public String getUpdated_at() {
 		return updated_at;
 	}
-
 	public void setUpdated_at(String updated_at) {
 		this.updated_at = updated_at;
 	}
-
 }

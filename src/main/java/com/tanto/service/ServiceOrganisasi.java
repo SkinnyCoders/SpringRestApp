@@ -9,14 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.tanto.functions.FileNameReplace;
 import com.tanto.functions.JerseyClientFunction;
 import com.tanto.model.ModelOrganisasi;
@@ -30,9 +24,7 @@ public class ServiceOrganisasi {
 	static ObjectMapper mapper = new ObjectMapper();
 	
 	public Boolean insertOrganisasi(ModelOrganisasi org, MultipartFile file) {
-		
 		try {
-			Client client = Client.create();
 			
 			if(org.getAfiliasi().isEmpty()) {
 				return false;
@@ -78,6 +70,7 @@ public class ServiceOrganisasi {
 	}
 	
 	public Boolean deleteOrganisasi(String id) {
+		System.out.println(id);
 		try {
 			JsonNode js = new JerseyClientFunction().clientDelete("http://127.0.0.1:9201/datates/_doc/" + id);
 			

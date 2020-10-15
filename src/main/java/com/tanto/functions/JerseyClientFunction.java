@@ -1,7 +1,5 @@
 package com.tanto.functions;
 
-import java.util.HashMap;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,7 +15,7 @@ public class JerseyClientFunction {
 	public static ObjectMapper mapper = new ObjectMapper();
 	public static Client client = Client.create();
 	
-	public JsonNode clientPost(String resource, HashMap<String, Object> data) throws UniformInterfaceException, ClientHandlerException, JsonProcessingException {
+	public JsonNode clientPost(String resource, Object data) throws UniformInterfaceException, ClientHandlerException, JsonProcessingException {
 		
 		client.addFilter(new HTTPBasicAuthFilter("elastic", "Br1m0b2020"));
 		WebResource wr = client.resource(resource);

@@ -15,14 +15,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tanto.model.MessageModel;
 import com.tanto.model.ModelLaporan;
+import com.tanto.model.ModelLaporanUpdate;
 import com.tanto.service.ServiceLaporan;
+import com.tanto.service.ServiceLaporanImplModel;
 
 @RestController
 @RequestMapping("/laporan")
 public class ControllerLaporan {
 
 	@Autowired
-	ServiceLaporan service;
+	ServiceLaporanImplModel service;
 	
 	@SuppressWarnings("rawtypes")
 	private ResponseEntity respon;
@@ -78,7 +80,7 @@ public class ControllerLaporan {
 			consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, 
 			produces = {MediaType.APPLICATION_JSON_VALUE}
 			)
-	public ResponseEntity<MessageModel> updateLaporan(ModelLaporan mlaporan, @RequestParam("file") MultipartFile file){
+	public ResponseEntity<MessageModel> updateLaporan(ModelLaporanUpdate mlaporan, @RequestParam("file") MultipartFile file){
 		MessageModel ms = new MessageModel();
 		
 		Boolean result = service.updateLaporan(mlaporan, file);

@@ -1,10 +1,6 @@
 package com.tanto.model;
 
-import java.nio.charset.StandardCharsets;
-
-import com.google.common.hash.Hashing;
-
-public class ModelOrganisasi {
+public class ModelOrganisasiUpdate {
 	private String id;
 	private String logo;
 	private String nama;
@@ -18,16 +14,13 @@ public class ModelOrganisasi {
 	private int jumlah_masa;
 	private String web_email;
 	private String keterangan;
-	private String created_at;
 	private String updated_at;
 	
 	public String getId() {
-		String idString = this.getNama()+"-"+this.getTanggal_berdiri();
-		String idHash = Hashing.sha256()
-				.hashString(idString, StandardCharsets.UTF_8)
-				.toString();
-		
-		return idHash;
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getLogo() {
 		return logo;
@@ -101,16 +94,13 @@ public class ModelOrganisasi {
 	public void setKeterangan(String keterangan) {
 		this.keterangan = keterangan;
 	}
-	public String getCreated_at() {
-		return created_at;
-	}
-	public void setCreated_at(String created_at) {
-		this.created_at = created_at;
-	}
 	public String getUpdated_at() {
 		return updated_at;
 	}
 	public void setUpdated_at(String updated_at) {
 		this.updated_at = updated_at;
 	}
+	
+	
+
 }
